@@ -1,0 +1,4 @@
+requests
+livy
+flask
+connexion[swagger-ui]
