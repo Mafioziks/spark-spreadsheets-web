@@ -12,26 +12,6 @@ basePath: "/api"
 
 # Paths supported by the server application
 paths:
-  /people:
-    get:
-      operationId: "people.read"
-      tags:
-        - "People"
-      summary: "The people data structure supported by the server application"
-      description: "Read the list of people"
-      responses:
-        200:
-          description: "Successful read people list operation"
-          schema:
-            type: "array"
-            items:
-              properties:
-                fname:
-                  type: "string"
-                lname:
-                  type: "string"
-                timestamp:
-                  type: "string"
   /session:
     get:
       operationId: "session.read"
@@ -42,3 +22,73 @@ paths:
       responses:
         200:
           description: "Successfully got list of active sessions"
+  /spreadsheet/files:
+    get:
+      operationId: "spreadsheets.files.listing"
+      tags:
+        - "files"
+      summary: "List databases residing in spark"
+      description: "List databases"
+      responses:
+        200:
+          description: "Successfully got list of databases"
+  /spreadsheet/file:
+    get:
+      operationId: "spreadsheets.file.view"
+      tags:
+        - "files"
+      summary: "Get list of sheets in the file"
+      description: "Get list of sheets in the file"
+      responses:
+        200:
+          description: "Successfully returns sheet listing"
+  /spreadsheet/sheet:
+    get:
+      operationId: "spreadsheets.file.sheet.view"
+      tags:
+        - "sheet"
+      summary: "Get sheet content in the file"
+      description: "Get sheet structure and content"
+      responses:
+        200:
+          description: "Successfully got sheet structure and content"
+    put:
+      operationId: "spreadsheets.file.sheet.add"
+      tags:
+        - "sheet"
+      summary: "Add new sheet to the file"
+      description: "Add new sheet to the file"
+      responses:
+        200:
+          description: "New sheet created"
+    post:
+      operationId: "spreadsheets.file.sheet.update"
+      tags:
+        - "sheet"
+      summary: "Update sheet structure"
+      description: "Update sheet structure"
+      responses:
+        200:
+          description: "Sheet successfully updated"
+  /spreadsheet/sheet/data:
+    get:
+      operationId: "spreadsheets.file.sheet.data.view"
+      tags:
+        - "data"
+        - "sheet"
+      summary: "Get sheet data"
+      description: "Get sheet data"
+      responses:
+        200:
+          description: "Successfully returned data in the sheet"
+    post:
+      operationId: "spreadsheets.file.sheet.data.update"
+      tags:
+        - "sheet"
+        - "data"
+      summary: "Update sheet data"
+      description: "Update sheet data"
+      responses:
+        200:
+          description: "Successfully updated data in the sheet"
+
