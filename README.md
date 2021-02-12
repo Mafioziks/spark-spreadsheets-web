@@ -12,6 +12,20 @@ Build docker image:
 $ docker build .
 ```
 
+Possible build arguments:
+- openjdk_version
+- scala_version
+- spark_version
+- hadoop_version
+- livy_version
+
+Default build argument values are:
+- openjdk_version=8
+- scala_version=2.11.12
+- spark_version=3.0.1
+- hadoop_version=2.7
+- livy_version=0.7.0
+
 Run container from image:
 ```bash
 $ docker run -p 8888:8888 -p 8998:8998 [docker_image_hash]
