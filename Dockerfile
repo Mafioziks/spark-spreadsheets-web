@@ -47,6 +47,25 @@ RUN wget -q "https://downloads.lightbend.com/scala/${SCALA_VERSION}/scala-${SCAL
 ENV SCALA_HOME="/usr/local/scala"
 ENV PATH=$PATH:$SCALA_HOME/bin
 
+# maven installation
+ARG maven_version=3.6.3
+RUN wget -q "https://ftp.heanet.ie/mirrors/www.apache.org/dist/maven/maven-3/${maven_version}/binaries/apache-maven-${maven_version}-bin.tar.gz" \
+    && tar xzf "apache-maven-${maven_version}-bin.tar.gz" -C /usr/local --owner root --group root --no-same-owner \
+    && rm "apache-maven-${maven_version}-bin.tar.gz" \
+    && ln -s "/usr/local/maven-${maven_version}" /usr/local/maven
+
+ENV MAVEN_HOME="/usr/local/maven"
+ENV PATH=$PATH:$MAVEN_HOME/bin
+#RUN source .
+
+#RUN apt-get install --no-install-recommends -y r-base-dev git
+
+# build livy
+
+#RUN git clone https://github.com/apache/incubator-livy.git \
+#    && cd incubator-livy \
+#    && mvn package
+
 # Spark installation
 
 # Using the preferred mirror to download Spark
@@ -92,7 +111,7 @@ WORKDIR $HOME
 ARG livy_version=0.7.0
 
 # setting environment variables for Livy
-ENV HADOOP_CONF_DIR=/etc/hadoop/conf
+#ENV HADOOP_CONF_DIR=/etc/hadoop/conf
 ENV LIVY_VERSION="${livy_version}"
 
 # downloading livy
@@ -107,6 +126,7 @@ RUN mkdir -m 777 -p "$LIVY_CONF_DIR"
 
 # make configuration changes for livy
 RUN echo "livy.server.port = 8998" >> "$LIVY_CONF_DIR/livy.conf" \
+    && echo "livy.spark.host = 127.0.0.1" >> "$LIVY_CONF_DIR/livy.conf" \
     && echo "livy.spark.version = ${APACHE_SPARK_VERSION}" >> "$LIVY_CONF_DIR/livy.conf" \
     && echo "livy.spark.scala-version = ${SCALA_VERSION}" >> "$LIVY_CONF_DIR/livy.conf"
 
@@ -125,3 +145,5 @@ RUN "./apache-livy-$LIVY_VERSION-incubating-bin/bin/livy-server" start
 
 # expose livy port
 EXPOSE 8998/tcp
+EXPOSE 1000/tcp
+EXPOSE 1001/tcp
