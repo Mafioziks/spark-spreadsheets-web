@@ -3,7 +3,9 @@
 W_DIR=$(pwd)
 
 # switch to python env and run API
-. ./fyp/bin/activate
+if [[ "env" == "$1" ]]; then
+  . ./fyp/bin/activate
+fi
 python app.py &
 
 # run front-end
