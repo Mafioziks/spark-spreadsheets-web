@@ -46,3 +46,7 @@ $ python app.py
 After this Swagger API documentation is located on: `http://localhost:5000/api/ui`
 
 Page will be located on: `http://localhost:5000`
+
+### References
+
+Livy docker image is based on: [https://github.com/tobilg/docker-livy](https://github.com/tobilg/docker-livy)
