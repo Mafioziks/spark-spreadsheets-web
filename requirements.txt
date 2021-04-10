@@ -3,3 +3,4 @@ livy
 flask
 connexion[swagger-ui]
 pyspark
+unittest_data_provider

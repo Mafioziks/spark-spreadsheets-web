@@ -9,8 +9,8 @@ fi
 python app.py &
 
 # run front-end
-cd client
+cd client || exit 1
 npm run serve &
 
 # return
-cd $W_DIR
+cd "$W_DIR" || exit 1

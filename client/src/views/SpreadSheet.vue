@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-12 mb-3">
           <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-            <button type="button" class="btn btn-secondary">Open</button>
+            <button type="button" class="btn btn-secondary" @click="connect">Open</button>
             <button type="button" class="btn btn-secondary">Save</button>
 
             <div class="btn-group" role="group">
@@ -55,7 +55,21 @@
 
 <script>
 export default {
-  name: 'SpreadSheet'
+  name: 'SpreadSheet',
+  setup () {
+    const connect = (event) => {
+      fetch(window.location.protocol + '//' + window.location.hostname + ':5000/api/session', { mode: 'no-cors' })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          alert(data)
+        })
+    }
+
+    return {
+      connect
+    }
+  }
 }
 </script>
 
