@@ -1,5 +1,6 @@
 import requests, json
 from flask import request
+from pprint import pprint
 
 
 link = 'http://127.0.0.1'
@@ -38,6 +39,7 @@ def get_session_id():
 
     return session_id
 
+
 # Create a handler for our read (GET) spark sessions
 def read():
     """
@@ -51,3 +53,13 @@ def read():
         return {'error': 'Connection exception'}
 
     return response.json()
+
+
+def end(id):
+    try:
+        pprint(f'{link}:{port}/sessions/' + str(id))
+        __response__ = requests.delete(f'{link}:{port}/sessions/' + str(id), headers=headers)
+        pprint(__response__)
+        return {}
+    except requests.exceptions.ConnectionError:
+        return {}, 500

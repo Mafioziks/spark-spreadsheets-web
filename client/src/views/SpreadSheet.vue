@@ -4,13 +4,19 @@
       <div class="row mb-3">
         <div class="col-6">
           <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-            <button type="button" class="btn btn-secondary" @click="connect">Open</button>
-            <button type="button" class="btn btn-secondary">Save</button>
+            <Button type="button" button-type="secondary" data-toggle="modal" data-target="#file-modal">Open File</Button>
+            <Button button-type="secondary">Save</Button>
 
             <div class="btn-group" role="group">
-              <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <Button
+                id="btnGroupDrop1"
+                button-type="secondary"
+                class="dropdown-toggle"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false">
                 Export
-              </button>
+              </Button>
               <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                 <a class="dropdown-item" href="#">Excel (.xlsx)</a>
                 <a class="dropdown-item" href="#">CSV (.csv)</a>
@@ -54,26 +60,42 @@
       </table>
     </div>
   </div>
+
+  <Dialog id="file-modal">
+    <template v-slot:title>
+      Choose file
+    </template>
+    <template v-slot:default>
+      <ul>
+        <li v-for="(name, index) in database.list" v-bind:key="index">{{ name }}</li>
+      </ul>
+    </template>
+  </Dialog>
 </template>
 
 <script>
 import ProfileButton from '@/components/ProfileButton'
+import { onMounted, reactive } from 'vue'
+import { getSpreadsheets } from '@/components/apicalls/getSpreadsheets'
+import Dialog from '@/components/Dialog'
+import Button from '@/components/Button'
 
 export default {
   name: 'SpreadSheet',
-  components: { ProfileButton },
+  components: { Dialog, Button, ProfileButton },
   setup () {
-    const connect = (event) => {
-      fetch(window.location.protocol + '//' + window.location.hostname + ':5000/api/session', { mode: 'no-cors' })
-        .then(response => response.json())
-        .then(data => {
-          console.log(data)
-          alert(data)
-        })
-    }
+    const database = reactive({ list: [] })
+
+    onMounted(async () => {
+      const databasesData = await getSpreadsheets()
+
+      console.log(databasesData)
+
+      database.list = databasesData.data
+    })
 
     return {
-      connect
+      database
     }
   }
 }

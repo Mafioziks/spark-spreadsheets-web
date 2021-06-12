@@ -12,39 +12,39 @@ basePath: "/api"
 
 # Paths supported by the server application
 paths:
-  /oauth2/dialog:
-    get:
-      operationId: "user.auth.oauth_dialog"
-      tags:
-        - "authorization"
-      responses:
-        200:
-          description: "Successfully got permission"
-      parameters:
-        - name: response_type
-          in: query
-          type: string
-          required: true
-        - name: redirect_uri
-          in: query
-          type: string
-          required: true
-        - name: realm
-          in: query
-          type: string
-          required: true
-        - name: client_id
-          in: query
-          type: string
-          required: true
-        - name: scope
-          in: query
-          type: string
-          required: true
-        - name: state
-          in: query
-          type: string
-          required: true
+#  /oauth2/dialog:
+#    get:
+#      operationId: "user.auth.oauth_dialog"
+#      tags:
+#        - "authorization"
+#      responses:
+#        200:
+#          description: "Successfully got permission"
+#      parameters:
+#        - name: response_type
+#          in: query
+#          type: string
+#          required: true
+#        - name: redirect_uri
+#          in: query
+#          type: string
+#          required: true
+#        - name: realm
+#          in: query
+#          type: string
+#          required: true
+#        - name: client_id
+#          in: query
+#          type: string
+#          required: true
+#        - name: scope
+#          in: query
+#          type: string
+#          required: true
+#        - name: state
+#          in: query
+#          type: string
+#          required: true
   /user/login:
     post:
       operationId: "user.auth.login"
@@ -129,8 +129,22 @@ paths:
       responses:
         200:
           description: "Successfully got list of active sessions"
-      security:
-        - oauth2: [ 'uid' ]
+#      security:
+#        - oauth2: [ 'uid' ]
+  '/session/{id}':
+    delete:
+      operationId: "livysession.end"
+      tags:
+        - "session"
+      summary: "End active livy session"
+      responses:
+        200:
+          description: "Successfully ended livy session"
+      parameters:
+        - name: "id"
+          in: "path"
+          type: integer
+          required: true
   /spreadsheet/files:
     get:
       operationId: "spreadsheets.files.listing"
@@ -220,11 +234,11 @@ paths:
         200:
           description: "Successfully updated data in the sheet"
 
-securityDefinitions:
-  oauth2:
-    type: oauth2
-    flow: implicit
-    authorizationUrl: http://localhost:5000/api/oauth2/dialog
-    x-tokenInfoFunc: user.auth.token_info
-    scopes:
-      uid: Unique identifier of the user accessing the service.
+#securityDefinitions:
+#  oauth2:
+#    type: oauth2
+#    flow: implicit
+#    authorizationUrl: http://localhost:5000/api/oauth2/dialog
+#    x-tokenInfoFunc: user.auth.token_info
+#    scopes:
+#      uid: Unique identifier of the user accessing the service.
