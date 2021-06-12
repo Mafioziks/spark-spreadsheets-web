@@ -1,8 +1,8 @@
 <template>
   <div class="container-fluid">
     <header class="page-header">
-      <div class="row">
-        <div class="col-12 mb-3">
+      <div class="row mb-3">
+        <div class="col-6">
           <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
             <button type="button" class="btn btn-secondary" @click="connect">Open</button>
             <button type="button" class="btn btn-secondary">Save</button>
@@ -17,6 +17,9 @@
               </div>
             </div>
           </div>
+        </div>
+        <div class="col-6 text-right">
+          <ProfileButton />
         </div>
       </div>
     </header>
@@ -54,8 +57,11 @@
 </template>
 
 <script>
+import ProfileButton from '@/components/ProfileButton'
+
 export default {
   name: 'SpreadSheet',
+  components: { ProfileButton },
   setup () {
     const connect = (event) => {
       fetch(window.location.protocol + '//' + window.location.hostname + ':5000/api/session', { mode: 'no-cors' })

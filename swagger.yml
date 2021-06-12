@@ -1,8 +1,8 @@
 swagger: "2.0"
 info:
-  description: This is the swagger file that goes with our server code
+  description: REST API for Apache Spark Spreadsheets
   version: "1.0.0"
-  title: Swagger REST Article
+  title: Apache Spark Spreadsheets
 consumes:
   - "application/json"
 produces:
@@ -12,9 +12,116 @@ basePath: "/api"
 
 # Paths supported by the server application
 paths:
+  /oauth2/dialog:
+    get:
+      operationId: "user.auth.oauth_dialog"
+      tags:
+        - "authorization"
+      responses:
+        200:
+          description: "Successfully got permission"
+      parameters:
+        - name: response_type
+          in: query
+          type: string
+          required: true
+        - name: redirect_uri
+          in: query
+          type: string
+          required: true
+        - name: realm
+          in: query
+          type: string
+          required: true
+        - name: client_id
+          in: query
+          type: string
+          required: true
+        - name: scope
+          in: query
+          type: string
+          required: true
+        - name: state
+          in: query
+          type: string
+          required: true
+  /user/login:
+    post:
+      operationId: "user.auth.login"
+      tags:
+        - "user"
+        - "authorization"
+      summary: "Get token for authorization"
+      responses:
+        200:
+          description: "Successfully got token"
+      parameters:
+        - name: data
+          in: body
+          schema:
+            type: object
+            required:
+              - email
+              - password
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+  /user/register:
+    post:
+      operationId: "user.auth.register"
+      tags:
+        - "user"
+        - "authorization"
+      summary: "Register user"
+      responses:
+        200:
+          description: "Successfully registered user"
+      parameters:
+        - name: data
+          in: body
+          schema:
+            type: object
+            required:
+              - firstName
+              - lastName
+              - email
+              - password
+              - passwordVerify
+            properties:
+              firstName:
+                type: string
+              lastName:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+              passwordVerify:
+                type: string
+  /user/logout:
+    get:
+      operationId: "user.auth.logout"
+      tags:
+        - "user"
+        - "authorization"
+      summary: "User logout"
+      responses:
+        200:
+          description: "User successfully logged out"
+  /user/profile:
+    get:
+      operationId: "user.view"
+      tags:
+        - "user"
+      summary: "Get personal user information"
+      responses:
+        200:
+          description: "Gets logged in user information"
   /session:
     get:
-      operationId: "session.read"
+      operationId: "livysession.read"
       tags:
         - "Session"
       summary: "Get list of active sessions"
@@ -22,6 +129,8 @@ paths:
       responses:
         200:
           description: "Successfully got list of active sessions"
+      security:
+        - oauth2: [ 'uid' ]
   /spreadsheet/files:
     get:
       operationId: "spreadsheets.files.listing"
@@ -32,6 +141,25 @@ paths:
       responses:
         200:
           description: "Successfully got list of databases"
+    post:
+      operationId: "spreadsheets.files.create"
+      tags:
+        - "files"
+      summary: "Create database residing in spark"
+      description: "Create databases"
+      responses:
+        200:
+          description: "Successfully created database"
+      parameters:
+        - name: data
+          in: body
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
   /spreadsheet/file:
     get:
       operationId: "spreadsheets.file.view"
@@ -92,3 +220,11 @@ paths:
         200:
           description: "Successfully updated data in the sheet"
 
+securityDefinitions:
+  oauth2:
+    type: oauth2
+    flow: implicit
+    authorizationUrl: http://localhost:5000/api/oauth2/dialog
+    x-tokenInfoFunc: user.auth.token_info
+    scopes:
+      uid: Unique identifier of the user accessing the service.

@@ -4,3 +4,9 @@ flask
 connexion[swagger-ui]
 pyspark
 unittest_data_provider
+Flask-Session
+Flask-SQLAlchemy
+flask-marshmallow
+marshmallow-sqlalchemy
+marshmallow
+pymysql

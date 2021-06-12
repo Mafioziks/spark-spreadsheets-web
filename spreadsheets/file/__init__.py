@@ -1,2 +1,6 @@
+import livysession
+
+
 def view():
-    pass
+    livysession.start()
+
