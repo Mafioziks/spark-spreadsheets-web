@@ -88,6 +88,7 @@ import ProfileButton from '@/components/ProfileButton'
 import { onMounted, reactive } from 'vue'
 import { getSpreadsheets } from '@/components/apicalls/getSpreadsheets'
 import { postSpreadsheets } from '@/components/apicalls/postSpreadsheets'
+import { getChildElementsByClassName, simulateClick } from '@/utils/dom'
 import Dialog from '@/components/Dialog'
 import Button from '@/components/Button'
 import Icon from '@/components/Icon'
@@ -120,12 +121,17 @@ export default {
     }
 
     async function handleFileAction () {
-      if (
-        (database.selected === '' || database.selected === null) &&
-        database.new
-      ) {
+      if (database.new) {
         database.selected = database.new
         await handleFileCreate()
+        const modal = document.getElementById('file-modal')
+
+        if (modal) {
+          const closeElements = getChildElementsByClassName(modal, 'close')
+          if (closeElements.length === 1) {
+            simulateClick(closeElements[0])
+          }
+        }
       }
 
       await handleFileOpen()
@@ -143,6 +149,7 @@ export default {
       const databaseCreate = await postSpreadsheets(name)
 
       if (!databaseCreate.ok) {
+        // TODO: Inform user about database creation problem
         return
       }
 
