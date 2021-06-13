@@ -147,7 +147,7 @@ paths:
           required: true
   /spreadsheet/files:
     get:
-      operationId: "spreadsheets.files.listing"
+      operationId: "spreadsheets.files.list_files"
       tags:
         - "files"
       summary: "List databases residing in spark"

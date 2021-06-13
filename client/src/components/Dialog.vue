@@ -16,10 +16,8 @@
         <slot></slot>
       </div>
       <div class="modal-footer">
-        <slot name="footer">
-          <Button buttonType="primary">Save changes</Button>
-          <Button buttonType="secondary" data-dismiss="modal">Close</Button>
-        </slot>
+        <slot name="footer"></slot>
+        <Button buttonType="secondary" data-dismiss="modal">Cancel</Button>
       </div>
     </div>
   </div>

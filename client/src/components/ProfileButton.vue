@@ -1,7 +1,7 @@
 <template>
   <div class="dropdown">
     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      {{ button.text }}
+      <Icon icon="bi-person" /> {{ button.text }}
     </button>
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" v-if="button.status === 'logged'">
       <button class="dropdown-item" type="button" @click="handleLogout">Log out</button>
@@ -14,9 +14,11 @@ import { onMounted, reactive } from 'vue'
 import router from '@/router'
 import { getProfile } from '@/components/apicalls/getProfile'
 import { getLogout } from '@/components/apicalls/getLogout'
+import Icon from '@/components/Icon'
 
 export default {
   name: 'ProfileButton',
+  components: { Icon },
   setup () {
     const button = reactive({
       text: 'User Name',
