@@ -43,6 +43,13 @@
       </div>
     </div>
     <div>
+      <div class="row">
+        <div class="col-12">
+          <Sheets :sheets="database.current.sheets"/>
+        </div>
+      </div>
+    </div>
+    <div>
       <table class="table table-bordered table-sm table-hover">
         <thead class="thead-dark">
           <tr>
@@ -68,17 +75,29 @@
     </template>
 
     <template v-slot:default>
-      <Input v-model="database.new" label="New File" name="new-name"/>
+
+      <Alert type="danger" v-if="errors.fileSelectModal">{{errors.fileSelectModal}}</Alert>
+      <form @submit.prevent="handleFileCreate">
+        <CustomInput v-model="database.new" label="New File" name="new-name"/>
+        <Button><Icon icon="bi-plus"/> Create</Button>
+      </form>
       <hr/>
-      <div class="row">
-        <Button class="p-3 m-1 btn-block" button-type="light" v-for="(name, index) in database.list" v-bind:key="index" @click="handleFileSelected">
-          <Icon icon="bi-file-earmark-ruled"/> {{ name }}
-        </Button>
+      <div class="file-modal-content">
+        <div
+          class="btn btn-light btn-block file-select text-left text-uppercase pt-2"
+          v-bind:class="{'btn-dark': name === database.selected}"
+          v-for="(name, index) in database.list"
+          v-bind:key="index"
+          @click="handleClickToChildInput"
+        >
+          <label for="file-select" class="pt-2"><Icon icon="bi-file-earmark-ruled"/> {{ name }}</label>
+          <input type="radio" :value="name" name="file" id="file-select" class="hide" @click="handleFileSelected">
+        </div>
       </div>
     </template>
 
     <template v-slot:footer>
-      <Button buttonType="primary" @click="handleFileAction">Save</Button>
+      <Button buttonType="primary" @click="handleFileOpen">Open</Button>
     </template>
   </Dialog>
 </template>
@@ -86,55 +105,83 @@
 <script>
 import ProfileButton from '@/components/ProfileButton'
 import { onMounted, reactive } from 'vue'
-import { getSpreadsheets } from '@/components/apicalls/getSpreadsheets'
-import { postSpreadsheets } from '@/components/apicalls/postSpreadsheets'
+import { listWorkbooks, createWorkbook } from '@/components/apicalls/files'
+import { listSheets, createSheet } from '@/components/apicalls/workbook'
 import { getChildElementsByClassName, simulateClick } from '@/utils/dom'
 import Dialog from '@/components/Dialog'
 import Button from '@/components/Button'
 import Icon from '@/components/Icon'
-import Input from '@/components/Input'
+import CustomInput from '@/components/CustomInput'
+import Alert from '@/components/Alert'
+import Sheets from '@/components/Sheets'
 
 export default {
   name: 'SpreadSheet',
-  components: { Input, Icon, Dialog, Button, ProfileButton },
+  components: { Sheets, Alert, CustomInput, Icon, Dialog, Button, ProfileButton },
   setup () {
     const database = reactive({
       list: [],
       selected: '',
-      new: ''
+      new: '',
+      current: {
+        name: '',
+        sheets: {}
+      }
+    })
+
+    const errors = reactive({
+      fileSelectModal: ''
     })
 
     onMounted(async () => {
-      const databasesData = await getSpreadsheets()
-
-      console.log(databasesData)
-
+      const databasesData = await listWorkbooks()
       database.list = databasesData.data
     })
 
     function handleFileSelected (event) {
-      database.selected = database.list[event.target.value]
+      database.selected = document.querySelector('input[name=' + event.target.name + ']:checked').value
       // TODO: toggle button by giving toggling value to button as property
     }
 
     async function handleFileOpen () {
-    }
+      if (!database.selected) {
+        errors.fileSelectModal = 'No file selected!'
+        return
+      }
 
-    async function handleFileAction () {
-      if (database.new) {
-        database.selected = database.new
-        await handleFileCreate()
-        const modal = document.getElementById('file-modal')
-
-        if (modal) {
-          const closeElements = getChildElementsByClassName(modal, 'close')
-          if (closeElements.length === 1) {
-            simulateClick(closeElements[0])
-          }
+      const modal = document.getElementById('file-modal')
+      if (modal) {
+        const closeElements = getChildElementsByClassName(modal, 'close')
+        if (closeElements.length === 1) {
+          simulateClick(closeElements[0])
         }
       }
 
-      await handleFileOpen()
+      errors.fileSelectModal = ''
+      database.current.name = database.selected
+
+      const result = await listSheets(database.current.name)
+
+      if (!result.ok) {
+        return
+      }
+
+      result.data.forEach(sheet => {
+        database.current.sheets[sheet] = {
+          columns: [],
+          data: []
+        }
+      })
+
+      if (Object.keys(database.current.sheets).length === 0) {
+        const sheets = await createSheet(database.current.name, 'Sample')
+
+        if (!sheets.ok) {
+          return
+        }
+
+        database.current.sheets = sheets.data
+      }
     }
 
     async function handleFileCreate () {
@@ -145,8 +192,9 @@ export default {
 
       const name = database.new.trim()
       database.new = ''
+      database.selected = name
 
-      const databaseCreate = await postSpreadsheets(name)
+      const databaseCreate = await createWorkbook(name)
 
       if (!databaseCreate.ok) {
         // TODO: Inform user about database creation problem
@@ -156,19 +204,39 @@ export default {
       database.list.push(database.selected)
     }
 
+    function handleClickToChildInput (event) {
+      let input
+
+      event.target.childNodes.forEach(node => {
+        if (node.nodeName === 'INPUT') {
+          input = node
+        }
+      })
+
+      if (input) {
+        simulateClick(input)
+      }
+    }
+
     return {
       database,
+      errors,
       handleFileSelected,
       handleFileCreate,
       handleFileOpen,
-      handleFileAction
+      handleClickToChildInput
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-//.page-header {
-//  background-color: #42b983;
-//}
+.file-modal-content {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.hide {
+  display: none;
+}
 </style>

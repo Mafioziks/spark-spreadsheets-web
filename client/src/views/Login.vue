@@ -8,8 +8,8 @@
         </header>
         <form class="card-body" @submit.prevent="handleLogin">
           <Alert type="danger" v-if="errors.form" :message="errors.form"/>
-          <Input label="Email" type="email" name="email" v-model="form.email" />
-          <Input label="Password" type="password" name="password" v-model="form.password"/>
+          <CustomInput label="Email" type="email" name="email" v-model="form.email" />
+          <CustomInput label="Password" type="password" name="password" v-model="form.password"/>
           <button class="btn btn-primary btn-block">Login</button>
         </form>
         <footer class="card-footer text-center">
@@ -22,15 +22,15 @@
 </template>
 
 <script>
-import Input from '@/components/Input'
+import CustomInput from '@/components/CustomInput'
 import { reactive } from 'vue'
 import router from '@/router'
 import Alert from '@/components/Alert'
-import { postLogin } from '@/components/apicalls/postLogin'
+import { login } from '@/components/apicalls/user'
 
 export default {
   name: 'Login',
-  components: { Alert, Input },
+  components: { Alert, CustomInput },
   setup () {
     const form = reactive({
       email: '',
@@ -44,7 +44,7 @@ export default {
     async function handleLogin () {
       errors.form = ''
 
-      const loginData = await postLogin(form)
+      const loginData = await login(form)
 
       if (loginData.ok) {
         await router.push('SpreadSheet')

@@ -12,8 +12,7 @@
 <script>
 import { onMounted, reactive } from 'vue'
 import router from '@/router'
-import { getProfile } from '@/components/apicalls/getProfile'
-import { getLogout } from '@/components/apicalls/getLogout'
+import { getProfile, logout } from '@/components/apicalls/user'
 import Icon from '@/components/Icon'
 
 export default {
@@ -31,7 +30,6 @@ export default {
       const profile = await getProfile()
 
       if (!profile.ok) {
-        console.log(profile.data)
         await router.push('Login')
         return
       }
@@ -41,15 +39,12 @@ export default {
     })
 
     async function handleLogout () {
-      const data = await getLogout()
+      const data = await logout()
 
       if (data.ok) {
         await router.push('Login')
-        return
       }
-
       // TODO: Add global alert
-      console.log(data)
     }
     return { button, handleLogout }
   }

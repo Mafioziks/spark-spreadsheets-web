@@ -1,6 +1,7 @@
 from livy.api import API
 from flask import session
 from pprint import pprint
+from livy.parser import get_sql_databases
 
 
 def list_files():
@@ -31,11 +32,7 @@ def list_files():
     if list_databases['result']['output'] is None:
         return []
 
-    databases = []
-    for database in list_databases['result']['output']['data']['application/json']['data']:
-        databases.append(database[0])
-
-    return databases, 200
+    return get_sql_databases(list_databases['result']), 200
 
 
 def create(data):

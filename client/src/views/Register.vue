@@ -8,11 +8,11 @@
         </header>
         <div class="card-body">
           <form @submit.prevent="handleRegistration">
-            <Input label="First Name" name="first_name" v-model="form.firstName" />
-            <Input label="Last Name" name="last_name" v-model="form.lastName" />
-            <Input label="Email" name="email" type="email" v-model="form.email" />
-            <Input label="Password" name="password" type="password" v-model="form.password" />
-            <Input label="Password Repeated" name="passwordVerify" type="password" v-model="form.passwordVerify"/>
+            <CustomInput label="First Name" name="first_name" v-model="form.firstName" />
+            <CustomInput label="Last Name" name="last_name" v-model="form.lastName" />
+            <CustomInput label="Email" name="email" type="email" v-model="form.email" />
+            <CustomInput label="Password" name="password" type="password" v-model="form.password" />
+            <CustomInput label="Password Repeated" name="passwordVerify" type="password" v-model="form.passwordVerify"/>
             <button class="btn btn-primary btn-block">Register</button>
           </form>
         </div>
@@ -27,13 +27,14 @@
 </template>
 
 <script>
-import Input from '@/components/Input'
+import CustomInput from '@/components/CustomInput'
 import { reactive } from 'vue'
 import router from '@/router'
+import { register } from '@/components/apicalls/user'
 
 export default {
   name: 'Register',
-  components: { Input },
+  components: { CustomInput },
   setup () {
     const form = reactive({
       firstName: '',
@@ -51,25 +52,14 @@ export default {
     //   passwordVerify: ''
     // })
 
-    // const http = inject('axios')
-
-    function handleRegistration () {
+    async function handleRegistration () {
       // TODO: add email verification
-      fetch('/api/user/register', {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify(form),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(
-        response => router.push('/spreadsheet'),
-        error => {
-          console.log(error)
-          // const data = error.response.json()
-          // data.each((element, key) => { formValidation[key] = element })
-        }
-      )
+      const result = await register(form)
+
+      if (result.ok) {
+        await router.push('/spreadsheet')
+      }
+      // result.data.forEach((element, key) => { formValidation[key] = element })
     }
 
     return { handleRegistration, form }

@@ -174,19 +174,25 @@ paths:
             properties:
               name:
                 type: string
-  /spreadsheet/file:
+  /spreadsheet/file/sheets:
     get:
-      operationId: "spreadsheets.file.view"
+      operationId: "spreadsheets.workbook.get_sheets"
       tags:
-        - "files"
+        - "file"
+        - "spreadsheets"
       summary: "Get list of sheets in the file"
       description: "Get list of sheets in the file"
       responses:
         200:
           description: "Successfully returns sheet listing"
+      parameters:
+        - name: file
+          in: query
+          type: string
+          required: true
   /spreadsheet/sheet:
     get:
-      operationId: "spreadsheets.file.sheet.view"
+      operationId: "spreadsheets.sheet.view"
       tags:
         - "sheet"
       summary: "Get sheet content in the file"
@@ -195,7 +201,7 @@ paths:
         200:
           description: "Successfully got sheet structure and content"
     put:
-      operationId: "spreadsheets.file.sheet.add"
+      operationId: "spreadsheets.workbook.create_sheet"
       tags:
         - "sheet"
       summary: "Add new sheet to the file"
@@ -203,8 +209,21 @@ paths:
       responses:
         200:
           description: "New sheet created"
+      parameters:
+        - name: data
+          in: body
+          schema:
+            type: object
+            required:
+              - file
+              - sheet
+            properties:
+              file:
+                type: string
+              sheet:
+                type: string
     post:
-      operationId: "spreadsheets.file.sheet.update"
+      operationId: "spreadsheets.sheet.update"
       tags:
         - "sheet"
       summary: "Update sheet structure"
@@ -214,7 +233,7 @@ paths:
           description: "Sheet successfully updated"
   /spreadsheet/sheet/data:
     get:
-      operationId: "spreadsheets.file.sheet.data.view"
+      operationId: "spreadsheets.sheet.get_data"
       tags:
         - "data"
         - "sheet"
@@ -224,7 +243,7 @@ paths:
         200:
           description: "Successfully returned data in the sheet"
     post:
-      operationId: "spreadsheets.file.sheet.data.update"
+      operationId: "spreadsheets.sheet.update_data"
       tags:
         - "sheet"
         - "data"

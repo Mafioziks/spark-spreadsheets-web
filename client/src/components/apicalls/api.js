@@ -1,7 +1,8 @@
-async function getProfile () {
-  const response = await fetch('/api/user/profile', {
-    method: 'GET',
+async function call (method, url, content) {
+  const response = await fetch(url, {
+    method,
     credentials: 'include',
+    body: JSON.stringify(content),
     headers: {
       'Content-Type': 'application/json'
     }
@@ -16,4 +17,4 @@ async function getProfile () {
   }
 }
 
-module.exports = { getProfile }
+module.exports = { call }
