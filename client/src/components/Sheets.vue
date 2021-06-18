@@ -1,7 +1,7 @@
 <template>
 <nav>
   <div class="nav nav-tabs" id="nav-tab" role="tablist">
-    <SheetTab v-for="(sheet, name) in sheets"
+    <SheetTab v-for="name in sheetList"
               :key="name"
               :target="name"
               :handle-click="handleTabClick"
@@ -17,7 +17,7 @@
   </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
-  <SheetContent v-for="(sheet, name) in sheets"
+  <SheetContent v-for="name in sheetList"
                 v-bind:key="name"
                 :name="name"
                 :selected="isSelected(name)"
@@ -32,7 +32,8 @@
 import SheetTab from '@/components/SheetTab'
 import SheetContent from '@/components/SheetContent'
 import Icon from '@/components/Icon'
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
   name: 'Sheets',
@@ -52,8 +53,12 @@ export default {
       selectedSheet: 'add-new'
     })
 
-    if (file.selectedSheet === '' && Object.keys(props.sheets).length !== 0) {
-      file.selectedSheet = Object.keys(props.sheets)[0]
+    const store = useStore()
+
+    const sheetList = computed(() => store.getters['workbook/getSheetNames'])
+
+    if (file.selectedSheet === '' && store.getters['workbook/getSheetNames']().length !== 0) {
+      file.selectedSheet = store.getters['workbook/getSheetNames'][0]
     }
 
     function handleTabClick (sheetName) {
@@ -61,10 +66,15 @@ export default {
     }
 
     function isSelected (value) {
-      return file.selectedSheet === value;
+      return file.selectedSheet === value
     }
 
-    return { file, handleTabClick, isSelected }
+    return {
+      file,
+      handleTabClick,
+      isSelected,
+      sheetList
+    }
   }
 }
 </script>

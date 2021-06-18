@@ -105,8 +105,9 @@
 <script>
 import ProfileButton from '@/components/ProfileButton'
 import { onMounted, reactive } from 'vue'
+import { useStore } from 'vuex'
 import { listWorkbooks, createWorkbook } from '@/components/apicalls/files'
-import { listSheets, createSheet } from '@/components/apicalls/workbook'
+import { createSheet } from '@/components/apicalls/workbook'
 import { getChildElementsByClassName, simulateClick } from '@/utils/dom'
 import Dialog from '@/components/Dialog'
 import Button from '@/components/Button'
@@ -124,14 +125,15 @@ export default {
       selected: '',
       new: '',
       current: {
-        name: '',
-        sheets: {}
+        name: ''
       }
     })
 
     const errors = reactive({
       fileSelectModal: ''
     })
+
+    const store = useStore()
 
     onMounted(async () => {
       const databasesData = await listWorkbooks()
@@ -149,6 +151,8 @@ export default {
         return
       }
 
+      store.commit('workbook/setFile', database.selected)
+
       const modal = document.getElementById('file-modal')
       if (modal) {
         const closeElements = getChildElementsByClassName(modal, 'close')
@@ -157,30 +161,17 @@ export default {
         }
       }
 
+      await store.dispatch('workbook/fetchSheets')
       errors.fileSelectModal = ''
-      database.current.name = database.selected
 
-      const result = await listSheets(database.current.name)
-
-      if (!result.ok) {
-        return
-      }
-
-      result.data.forEach(sheet => {
-        database.current.sheets[sheet] = {
-          columns: [],
-          data: []
-        }
-      })
-
-      if (Object.keys(database.current.sheets).length === 0) {
+      if (store.getters['workbook/getSheetNames'].length === 0) {
         const sheets = await createSheet(database.current.name, 'Sample')
 
         if (!sheets.ok) {
           return
         }
 
-        database.current.sheets = sheets.data
+        await store.dispatch('workbook/fetchSheets')
       }
     }
 

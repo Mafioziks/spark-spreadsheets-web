@@ -11,7 +11,7 @@
   role="tab"
   :aria-controls="ariaControls"
   :aria-selected="ariaSelected"
-  @click="handleClick">
+  @click="handleClickInternal">
   <slot></slot>
 </button>
 </template>
@@ -42,11 +42,11 @@ export default {
 
     const ariaSelected = computed(() => props.selected ? 'true' : 'false')
 
-    function handleClick () {
+    function handleClickInternal () {
       props.handleClick(props.target)
     }
 
-    return { tabId, targetId, ariaControls, ariaSelected, handleClick }
+    return { tabId, targetId, ariaControls, ariaSelected, handleClickInternal }
   }
 }
 </script>

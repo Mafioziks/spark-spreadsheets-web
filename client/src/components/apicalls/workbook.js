@@ -12,4 +12,8 @@ async function createSheet (workbookName, sheetName, columns) {
   })
 }
 
-module.exports = { listSheets, createSheet }
+async function getSheetData (workbookName, sheetName) {
+  return await api.call('GET', '/api/spreadsheet/sheet?file=' + workbookName + '&sheet=' + sheetName)
+}
+
+module.exports = { listSheets, createSheet, getSheetData }

@@ -200,6 +200,15 @@ paths:
       responses:
         200:
           description: "Successfully got sheet structure and content"
+      parameters:
+        - name: file
+          in: query
+          type: string
+          required: true
+        - name: sheet
+          in: query
+          type: string
+          required: true
     put:
       operationId: "spreadsheets.workbook.create_sheet"
       tags:
