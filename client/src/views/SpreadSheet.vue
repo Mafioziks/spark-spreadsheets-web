@@ -49,24 +49,6 @@
         </div>
       </div>
     </div>
-    <div>
-      <table class="table table-bordered table-sm table-hover">
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">First Name</th>
-            <th scope="col">Last Name</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>Name</td>
-            <td>Surname</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
   </div>
 
   <Dialog id="file-modal">

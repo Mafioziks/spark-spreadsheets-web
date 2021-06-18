@@ -1,7 +1,7 @@
 from pprint import pprint
 from flask import session
 from livy.api import API
-from livy.parser import get_output_data_fields
+from livy.parser import get_output_data_fields, get_response
 
 
 def view(file, sheet):
@@ -23,7 +23,7 @@ def view(file, sheet):
         return {}
 
     pprint(statement)
-    return {'message': 'Database Created'}, 200
+    return get_response(statement['result']), 200
 
 
 def add():

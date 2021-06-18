@@ -10,8 +10,8 @@ def get_sql_databases(json):
 
 
 def get_output_data_fields(json, field_name):
-    schema = json['output']['data']['application/json']['schema']
-    data = json['output']['data']['application/json']['data']
+    schema = get_schema(json)
+    data = get_data(json)
 
     field_data = []
     for index, element in enumerate(schema['fields']):
@@ -20,3 +20,15 @@ def get_output_data_fields(json, field_name):
                 field_data.append(data_element[index])
 
     return field_data
+
+
+def get_data(json):
+    return json['output']['data']['application/json']['data']
+
+
+def get_schema(json):
+    return json['output']['data']['application/json']['schema']
+
+
+def get_response(json):
+    return json['output']['data']['application/json']

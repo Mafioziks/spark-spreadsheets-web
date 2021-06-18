@@ -22,7 +22,18 @@
                 :name="name"
                 :selected="isSelected(name)"
                 >
-    {{ name }}
+    <table class="table table-bordered table-sm table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col" v-for="column in columnList" :key="column.name">{{ column.name }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(row, index) in sheetData" :key="index">
+            <th v-for="(field, index) in row" :key="index">{{ field }}</th>
+          </tr>
+        </tbody>
+      </table>
   </SheetContent>
   <SheetContent :name="newSheet" :selected="isSelected(newSheet)">Empty sheet</SheetContent>
 </div>
@@ -41,11 +52,10 @@ export default {
   props: {
     sheets: {
       type: Object
-    }
-  },
-  data () {
-    return {
-      newSheet: 'add-new'
+    },
+    newSheet: {
+      type: String,
+      default: 'add-new'
     }
   },
   setup (props) {
@@ -56,13 +66,19 @@ export default {
     const store = useStore()
 
     const sheetList = computed(() => store.getters['workbook/getSheetNames'])
+    const columnList = computed(() => store.getters['workbook/getColumnNames'](file.selectedSheet))
+    const sheetData = computed(() => store.getters['workbook/getData'](file.selectedSheet))
 
-    if (file.selectedSheet === '' && store.getters['workbook/getSheetNames']().length !== 0) {
+    if (file.selectedSheet === '' && store.getters['workbook/getSheetNames'].length !== 0) {
       file.selectedSheet = store.getters['workbook/getSheetNames'][0]
     }
 
-    function handleTabClick (sheetName) {
+    async function handleTabClick (sheetName) {
       file.selectedSheet = sheetName
+
+      if (sheetName !== props.newSheet) {
+        await store.dispatch('workbook/fetchData', sheetName)
+      }
     }
 
     function isSelected (value) {
@@ -73,7 +89,9 @@ export default {
       file,
       handleTabClick,
       isSelected,
-      sheetList
+      sheetList,
+      columnList,
+      sheetData
     }
   }
 }
