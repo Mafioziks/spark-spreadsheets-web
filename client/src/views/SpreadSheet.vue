@@ -147,7 +147,7 @@ export default {
       errors.fileSelectModal = ''
 
       if (store.getters['workbook/getSheetNames'].length === 0) {
-        const sheets = await createSheet(database.current.name, 'Sample')
+        const sheets = await createSheet(store.getters['workbook/currentFile'], 'Sample')
 
         if (!sheets.ok) {
           return

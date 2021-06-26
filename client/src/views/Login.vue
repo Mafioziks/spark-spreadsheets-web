@@ -22,11 +22,11 @@
 </template>
 
 <script>
-import CustomInput from '@/components/CustomInput'
 import { reactive } from 'vue'
+import { useStore } from 'vuex'
 import router from '@/router'
+import CustomInput from '@/components/CustomInput'
 import Alert from '@/components/Alert'
-import { login } from '@/components/apicalls/user'
 
 export default {
   name: 'Login',
@@ -37,6 +37,8 @@ export default {
       password: ''
     })
 
+    const store = useStore()
+
     const errors = reactive({
       form: ''
     })
@@ -44,14 +46,12 @@ export default {
     async function handleLogin () {
       errors.form = ''
 
-      const loginData = await login(form)
+      await store.dispatch('auth/login', form)
 
-      if (loginData.ok) {
+      if (store.getters['auth/authorized']) {
         await router.push('SpreadSheet')
-        return
       }
-
-      errors.form = loginData.data.message || ''
+      // errors.form = loginData.data.message || ''
     }
 
     return { form, errors, handleLogin }

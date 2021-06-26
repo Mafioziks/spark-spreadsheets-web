@@ -27,4 +27,12 @@ function simulateClick (node) {
   node.dispatchEvent(event)
 }
 
-module.exports = { getChildElementsByClassName, simulateClick }
+function isEmpty (object) {
+  return object === undefined ||
+    (
+      typeof object === 'object' &&
+      Object.entries(object).length === 0
+    )
+}
+
+module.exports = { getChildElementsByClassName, simulateClick, isEmpty }

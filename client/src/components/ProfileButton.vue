@@ -12,8 +12,8 @@
 <script>
 import { onMounted, reactive } from 'vue'
 import router from '@/router'
-import { getProfile, logout } from '@/components/apicalls/user'
 import Icon from '@/components/Icon'
+import { useStore } from 'vuex'
 
 export default {
   name: 'ProfileButton',
@@ -25,23 +25,24 @@ export default {
       link: ''
     })
 
-    onMounted(async () => {
-      // TODO: Add user authorization in more global place for page
-      const profile = await getProfile()
+    const store = useStore()
 
-      if (!profile.ok) {
+    onMounted(async () => {
+      await store.dispatch('auth/getProfile')
+
+      if (!store.getters['auth/authorized']) {
         await router.push('Login')
         return
       }
 
-      button.text = profile.data.firstName + ' ' + profile.data.lastName
+      button.text = store.getters['auth/getFullName']
       button.status = 'logged'
     })
 
     async function handleLogout () {
-      const data = await logout()
+      await store.dispatch('auth/logoutUser')
 
-      if (data.ok) {
+      if (!store.getters['auth/authorized']) {
         await router.push('Login')
       }
       // TODO: Add global alert

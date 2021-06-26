@@ -11,7 +11,7 @@ async function call (method, url, content) {
   const data = await response.json()
 
   return {
-    status: response.statusCode,
+    status: response.status,
     ok: response.ok,
     data
   }
