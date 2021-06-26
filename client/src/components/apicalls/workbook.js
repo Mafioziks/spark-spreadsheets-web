@@ -16,4 +16,8 @@ async function getSheetData (workbookName, sheetName) {
   return await api.call('GET', '/api/spreadsheet/sheet?file=' + workbookName + '&sheet=' + sheetName)
 }
 
-module.exports = { listSheets, createSheet, getSheetData }
+async function addSheetData (workbookName, sheetName, data) {
+  return await api.call('POST', '/api/spreadsheet/sheet/data', { file: workbookName, sheet: sheetName, data })
+}
+
+module.exports = { listSheets, createSheet, getSheetData, addSheetData }

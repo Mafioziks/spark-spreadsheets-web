@@ -261,6 +261,21 @@ paths:
       responses:
         200:
           description: "Successfully updated data in the sheet"
+      parameters:
+        - name: data
+          in: body
+          schema:
+            type: object
+            required:
+              - file
+              - sheet
+            properties:
+              file:
+                type: string
+              sheet:
+                type: string
+              values:
+                type: array
 
 #securityDefinitions:
 #  oauth2:

@@ -45,7 +45,7 @@
     <div>
       <div class="row">
         <div class="col-12">
-          <Sheets :sheets="database.current.sheets"/>
+          <Sheets />
         </div>
       </div>
     </div>

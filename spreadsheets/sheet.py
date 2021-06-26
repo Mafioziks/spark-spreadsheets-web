@@ -1,5 +1,5 @@
 from pprint import pprint
-from flask import session
+from flask import session, request
 from livy.api import API
 from livy.parser import get_output_data_fields, get_response
 
@@ -39,4 +39,36 @@ def get_data():
 
 
 def update_data():
-    return {}
+    api = API()
+
+    livy_session = session.get('livy')
+    if None is livy_session:
+        livy_session = api.create_session_ready()
+
+    if livy_session['state'] in ('dead', 'killed'):
+        return {}
+
+    # TODO: Safe data handling in query
+
+    for row in request.json["data"]:
+        values = []
+        for value in row.values():
+            if type(value) is not int and type(value) is not float:
+                values.append(f"'{value}'")
+            else:
+                values.append(str(value))
+
+        values = ', '.join(values)
+        statement = api.send_sql_statement(
+            livy_session['session_id'],
+            f'INSERT INTO {request.json["file"]}.{request.json["sheet"]} VALUES ({values})'
+        )
+        if statement['result']['state'] == 'waiting':
+            statement = api.wait_statement_finish(statement['session_id'], statement['statement_id'])
+
+        if statement['result']['output'] is None:
+            return {}
+
+        pprint(statement)
+
+    return {'message': 'data added'}, 200

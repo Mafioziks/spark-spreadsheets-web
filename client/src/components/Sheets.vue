@@ -30,8 +30,9 @@
         </thead>
         <tbody>
           <tr v-for="(row, index) in sheetData" :key="index">
-            <th v-for="(field, index) in row" :key="index">{{ field }}</th>
+            <td v-for="(field, index) in row" :key="index">{{ field }}</td>
           </tr>
+          <DataRow :sheet="file.selectedSheet" />
         </tbody>
       </table>
   </SheetContent>
@@ -45,14 +46,12 @@ import SheetContent from '@/components/SheetContent'
 import Icon from '@/components/Icon'
 import { computed, reactive } from 'vue'
 import { useStore } from 'vuex'
+import DataRow from '@/components/DataRow'
 
 export default {
   name: 'Sheets',
-  components: { Icon, SheetContent, SheetTab },
+  components: { DataRow, Icon, SheetContent, SheetTab },
   props: {
-    sheets: {
-      type: Object
-    },
     newSheet: {
       type: String,
       default: 'add-new'
@@ -77,7 +76,7 @@ export default {
       file.selectedSheet = sheetName
 
       if (sheetName !== props.newSheet) {
-        await store.dispatch('workbook/fetchData', sheetName)
+        await store.dispatch('workbook/fetchData', { sheetName, force: true })
       }
     }
 
