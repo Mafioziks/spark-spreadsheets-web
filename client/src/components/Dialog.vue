@@ -39,11 +39,12 @@
 
 <script>
 import Button from '@/components/Button'
+import Icon from '@/components/Icon'
 import { computed } from 'vue'
 
 export default {
   name: 'Dialog',
-  components: { Button },
+  components: { Button, Icon },
   props: {
     id: {
       type: String,
