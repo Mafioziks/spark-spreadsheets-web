@@ -9,11 +9,38 @@
               >
       {{ name }}
     </SheetTab>
-    <SheetTab :target="newSheet"
-              :handle-click="handleTabClick"
-              :selected="isSelected(newSheet)">
-      <Icon icon="plus" /> Add new sheet
-    </SheetTab>
+    <div>
+      <Dialog class-name="btn-sm ml-2">
+        <template v-slot:button>
+          <Icon icon="bi-plus-lg" /> Add New Sheet
+        </template>
+
+        <template v-slot:title>
+          Add sheet
+        </template>
+
+        <template v-slot:default>
+          <form>
+            <CustomInput name="sheetName" type="text" label="Sheet name"/>
+            <hr/>
+            <h5>Columns</h5>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <input class="form-control" name="column[]" type="text" placeholder="Column name" />
+              </div>
+              <select class="custom-select" id="column">
+                <option selected>Data Type...</option>
+                <option value="String">String</option>]
+              </select>
+            </div>
+          </form>
+        </template>
+
+        <template v-slot:footer>
+          <Button>Add</Button>
+        </template>
+      </Dialog>
+    </div>
   </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
@@ -36,7 +63,6 @@
         </tbody>
       </table>
   </SheetContent>
-  <SheetContent :name="newSheet" :selected="isSelected(newSheet)">Empty sheet</SheetContent>
 </div>
 </template>
 
@@ -47,10 +73,13 @@ import Icon from '@/components/Icon'
 import { computed, reactive } from 'vue'
 import { useStore } from 'vuex'
 import DataRow from '@/components/DataRow'
+import Dialog from '@/components/Dialog'
+import Button from '@/components/Button'
+import CustomInput from '@/components/CustomInput'
 
 export default {
   name: 'Sheets',
-  components: { DataRow, Icon, SheetContent, SheetTab },
+  components: { CustomInput, Button, Dialog, DataRow, Icon, SheetContent, SheetTab },
   props: {
     newSheet: {
       type: String,

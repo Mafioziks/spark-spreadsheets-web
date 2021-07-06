@@ -4,7 +4,37 @@
       <div class="row mb-3">
         <div class="col-6">
           <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-            <Button type="button" button-type="secondary" data-toggle="modal" data-target="#file-modal"><Icon icon="bi-folder" /> Open File</Button>
+            <Dialog id="file-modal" button-type="secondary">
+              <template v-slot:title>
+                Choose file
+              </template>
+
+              <template v-slot:default>
+
+                <Alert type="danger" v-if="errors.fileSelectModal">{{errors.fileSelectModal}}</Alert>
+                <form @submit.prevent="handleFileCreate">
+                  <CustomInput v-model="database.new" label="New File" name="new-name"/>
+                  <Button><Icon icon="bi-plus"/> Create</Button>
+                </form>
+                <hr/>
+                <div class="file-modal-content">
+                  <div
+                    class="btn btn-light btn-block file-select text-left text-uppercase pt-2"
+                    v-bind:class="{'btn-dark': name === database.selected}"
+                    v-for="(name, index) in database.list"
+                    v-bind:key="index"
+                    @click="handleClickToChildInput"
+                  >
+                    <label for="file-select" class="pt-2"><Icon icon="bi-file-earmark-ruled"/> {{ name }}</label>
+                    <input type="radio" :value="name" name="file" id="file-select" class="hide" @click="handleFileSelected">
+                  </div>
+                </div>
+              </template>
+
+              <template v-slot:footer>
+                <Button buttonType="primary" @click="handleFileOpen">Open</Button>
+              </template>
+            </Dialog>
             <Button button-type="secondary"><Icon icon="bi-save" /> Save</Button>
 
             <div class="btn-group" role="group">
@@ -50,38 +80,6 @@
       </div>
     </div>
   </div>
-
-  <Dialog id="file-modal">
-    <template v-slot:title>
-      Choose file
-    </template>
-
-    <template v-slot:default>
-
-      <Alert type="danger" v-if="errors.fileSelectModal">{{errors.fileSelectModal}}</Alert>
-      <form @submit.prevent="handleFileCreate">
-        <CustomInput v-model="database.new" label="New File" name="new-name"/>
-        <Button><Icon icon="bi-plus"/> Create</Button>
-      </form>
-      <hr/>
-      <div class="file-modal-content">
-        <div
-          class="btn btn-light btn-block file-select text-left text-uppercase pt-2"
-          v-bind:class="{'btn-dark': name === database.selected}"
-          v-for="(name, index) in database.list"
-          v-bind:key="index"
-          @click="handleClickToChildInput"
-        >
-          <label for="file-select" class="pt-2"><Icon icon="bi-file-earmark-ruled"/> {{ name }}</label>
-          <input type="radio" :value="name" name="file" id="file-select" class="hide" @click="handleFileSelected">
-        </div>
-      </div>
-    </template>
-
-    <template v-slot:footer>
-      <Button buttonType="primary" @click="handleFileOpen">Open</Button>
-    </template>
-  </Dialog>
 </template>
 
 <script>

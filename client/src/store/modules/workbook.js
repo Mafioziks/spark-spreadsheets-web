@@ -59,6 +59,10 @@ export default {
       }
 
       state.sheets[sheetName].fetched = true
+    },
+    clear (state) {
+      state.file = ''
+      state.sheets = {}
     }
   },
   actions: {
@@ -112,6 +116,9 @@ export default {
       if (response.ok) {
         commit('appendSheetData', { sheetName, data: JSON.parse(jsonString) })
       }
+    },
+    async clear ({ commit }) {
+      await commit('clear')
     }
   },
   getters: {

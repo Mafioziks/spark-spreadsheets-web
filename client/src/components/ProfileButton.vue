@@ -43,6 +43,7 @@ export default {
       await store.dispatch('auth/logoutUser')
 
       if (!store.getters['auth/authorized']) {
+        await store.dispatch('workbook/clear')
         await router.push('Login')
       }
       // TODO: Add global alert

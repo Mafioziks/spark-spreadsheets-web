@@ -21,7 +21,10 @@ export default {
   props: {
     buttonType: {
       type: String,
-      default: 'primary'
+      default: 'primary',
+      validator: (value) => {
+        return ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'].indexOf(value) !== -1
+      }
     }
   }
 }
