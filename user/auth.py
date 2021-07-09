@@ -1,6 +1,7 @@
 from config import db
 from models import User, AccessScope, UserToken, TokenAccessScope, UserSchema
 from flask import redirect, request, session
+from livy.api import API
 
 
 def register():
@@ -59,6 +60,12 @@ def logout():
     """Logging out user by removing user information from session"""
     if session.get('user'):
         session.pop('user')
+
+    livy_session = session.get('livy')
+    if livy_session is not None:
+        api = API()
+        api.session_end(livy_session['session_id'])
+        session.pop('livy')
 
     return {}
 
